@@ -1,0 +1,109 @@
+<html>
+<head>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.bundle.js" integrity="sha256-8zyeSXm+yTvzUN1VgAOinFgaVFEFTyYzWShOy9w7WoQ=" crossorigin="anonymous"></script>
+</head>
+
+<body>
+    <input type="button" value="Simulate" onclick="run()" />
+    <canvas id="bar-chart" width="800" height="450"></canvas>
+</body>
+
+
+<script>
+    const numPeople = 1000
+    const timeBetweenRounds = 2
+    const numRounds = 10000
+
+    var people = []
+    var round = 0
+    var timer
+
+    var chart = new Chart(document.getElementById("bar-chart"), {
+        type: 'bar',
+        data: {
+          labels: [],
+          datasets: [
+            {
+              label: 'Money',
+              backgroundColor: 'black',
+              categoryPercentage: 1.0,
+              barPercentage: 1.0,
+              data: []
+            }
+          ]
+        },
+        options: {
+          legend: { display: false },
+          title: {
+            display: true,
+            text: `Round ${round}`
+          },
+        //   scales: {
+        //         yAxes: [{
+        //             ticks: {
+        //                 suggestedMin: 0,
+        //                 suggestedMax: numPeople
+        //             }
+        //         }]                
+        //     },
+            animation: false
+        }
+    })
+
+    function run() {
+        round = 0
+        people = []
+        //add numPeople people each with 1 dollar
+        for(let i = 0; i < numPeople; i++) {
+            people.push({
+                name: `p${i}`,
+                money: 1
+            })
+        }
+        //update the chart
+        chart.data.labels = people.map(p => p.name)
+        chart.data.datasets[0].data = people.map(p => p.money)
+        chart.update()
+
+        timer = setInterval(doRound, timeBetweenRounds)
+    }
+
+    function doRound() {
+        if(round >= numRounds) {
+            clearInterval(timer)
+            return
+        }
+        round++
+        doTrades()
+        chart.data.labels = people.map(p => p.name)
+        chart.data.datasets[0].data = people.map(p => p.money)
+        chart.options.title.text = `Round ${round}`
+        chart.update()
+    }
+
+    function doTrades() {
+        for(let i = 0; i < people.length-1; i+=2) {
+            let p1 = people[i]
+            let p2 = people[i+1]
+            if(p2.money === 0) {
+                break
+            }
+            if(coinFlip()) {
+                p1.money++
+                p2.money--
+            } else {
+                p1.money--
+                p2.money++
+            }
+        }
+        console.log(people)
+        people.sort(function (a, b) { return b.money - a.money})
+    }
+
+    function coinFlip() {
+        return (Math.floor(Math.random() * 2) == 0)
+    }
+
+</script>
+
+</html>
