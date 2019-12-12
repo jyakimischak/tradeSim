@@ -11,8 +11,10 @@
 
 <script>
     const numPeople = 1000
-    const timeBetweenRounds = 2
+    const maxSuggestedY = 100
+    const timeBetweenRounds = 0.02
     const numRounds = 10000
+    const startMoney = 10
 
     var people = []
     var round = 0
@@ -38,14 +40,14 @@
             display: true,
             text: `Round ${round}`
           },
-        //   scales: {
-        //         yAxes: [{
-        //             ticks: {
-        //                 suggestedMin: 0,
-        //                 suggestedMax: numPeople
-        //             }
-        //         }]                
-        //     },
+          scales: {
+                yAxes: [{
+                    ticks: {
+                        suggestedMin: 0,
+                        suggestedMax: maxSuggestedY
+                    }
+                }]                
+            },
             animation: false
         }
     })
@@ -57,7 +59,7 @@
         for(let i = 0; i < numPeople; i++) {
             people.push({
                 name: `p${i}`,
-                money: 1
+                money: startMoney
             })
         }
         //update the chart
